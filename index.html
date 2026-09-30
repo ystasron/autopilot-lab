@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="A small city with traffic lights, crosswalks and sidewalks, watched from above by a self-driving car.">
+<title>Autopilot Lab – self-driving city simulation</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="app">
+
+<header class="masthead">
+<h1>Autopilot Lab</h1>
+<p class="lede">A small city with traffic lights, crosswalks and sidewalks. The green car drives itself through the grid while other cars and pedestrians share the streets.</p>
+</header>
+
+<main>
+
+<section class="stage">
+<div class="segbar">
+<div class="segmented" id="camMode" role="radiogroup" aria-label="Camera view">
+<label class="seg"><input type="radio" name="cam" value="follow"><span>Follow</span></label>
+<label class="seg"><input type="radio" name="cam" value="free" checked><span>Free</span></label>
+</div>
+</div>
+<canvas id="c" width="900" height="560" role="img" aria-label="Top-down city driving simulation"></canvas>
+</section>
+
+<section class="block" aria-labelledby="tel-h">
+<h2 class="grp-h" id="tel-h">Telemetry</h2>
+<div class="group stats">
+<div class="cell"><b id="sp">0</b><span>km/h</span></div>
+<div class="cell"><b id="fr">–</b><span>clear ahead (px)</span></div>
+<div class="cell"><b id="sg">–</b><span>signal</span></div>
+<div class="cell"><b id="tr">–</b><span>trip</span></div>
+<div class="cell"><b id="dt">–</b><span>detections</span></div>
+<div class="cell"><b id="hit">0</b><span>collisions</span></div>
+<div class="cell"><b id="off">0</b><span>road exits</span></div>
+<div class="cell"><b id="nc">0</b><span>cars</span></div>
+<div class="cell"><b id="np">0</b><span>people</span></div>
+</div>
+</section>
+
+<section class="block" aria-labelledby="sen-h">
+<h2 class="grp-h" id="sen-h">Sensor overlays</h2>
+<fieldset id="sensors" class="group" aria-labelledby="sen-h">
+<label class="cell"><span>Planned path</span><i class="dot" style="--c:#58d5ff"></i><input type="checkbox" data-k="path" checked></label>
+<label class="cell"><span>Lane corridor</span><i class="dot" style="--c:#3fb950"></i><input type="checkbox" data-k="corr" checked></label>
+<label class="cell"><span>LiDAR</span><i class="dot" style="--c:#ff7b72"></i><input type="checkbox" data-k="lidar" checked></label>
+<label class="cell"><span>Camera FOV</span><i class="dot" style="--c:#e3b341"></i><input type="checkbox" data-k="cam" checked></label>
+<label class="cell"><span>Detections</span><i class="dot" style="--c:#d2a8ff"></i><input type="checkbox" data-k="det" checked></label>
+</fieldset>
+</section>
+
+<section class="block" aria-labelledby="ctl-h">
+<h2 class="grp-h" id="ctl-h">Controls</h2>
+<div class="group cgroup">
+<div class="cell wide"><button id="auto" class="btn primary" type="button">Autopilot: on</button></div>
+<div class="cell wide"><button id="night" class="btn" type="button">Night: off</button></div>
+<div class="cell"><button id="traf" class="btn" type="button">Add 5 cars</button></div>
+<div class="cell"><button id="ped" class="btn" type="button">Add 10 people</button></div>
+<div class="cell"><button id="clr" class="btn" type="button">Clear traffic</button></div>
+<div class="cell"><button id="rst" class="btn" type="button">Reset car</button></div>
+<div class="cell wide"><button id="cancel" class="btn quiet" type="button">Cancel trip</button></div>
+</div>
+
+<div class="group rows">
+<label class="row"><span class="row-label">Click</span><span class="row-ctl"><select id="click"><option value="pin">pins destination</option><option value="light">flips light</option></select></span></label>
+<label class="row"><span class="row-label">Next turn</span><span class="row-ctl"><select id="turn"><option value="random">random</option><option value="left">left</option><option value="straight">straight</option><option value="right">right</option></select></span></label>
+<label class="row"><span class="row-label">Top speed</span><span class="row-ctl"><input id="spd" type="range" min="30" max="120" value="70"><b id="spv">70</b><span class="unit">km/h</span></span></label>
+</div>
+
+<p class="hint">Click the map to pin a destination and the green car drives there. Change the click menu to flip traffic lights instead. Turn autopilot off to drive with the arrow keys.</p>
+</section>
+
+<section class="block" aria-labelledby="how-h">
+<h2 class="grp-h" id="how-h">How it drives</h2>
+<div class="how-grid">
+
+<article class="card">
+<span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-6.4 10-6.4S22 12 22 12s-3.6 6.4-10 6.4S2 12 2 12Z"/><circle cx="12" cy="12" r="2.7"/></svg></span>
+<h3>Sense</h3>
+<p>Toggle five overlays to see what the green car perceives: LiDAR points, the camera view cone with detection boxes, its lane corridor and the planned path.</p>
+</article>
+
+<article class="card">
+<span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21v-9.5A3.5 3.5 0 0 1 8.5 8H15"/><path d="m12.2 5 3 3-3 3"/><circle cx="5" cy="21" r="1.5"/></svg></span>
+<h3>Plan</h3>
+<p>At every intersection the car picks a turn, then follows the lane through it. It signals its turns, slows for corners, stops at red lights, yields to oncoming cars on left turns and waits for people on crosswalks. Other drivers follow the same rules, each with a personality: cautious, normal or hurried.</p>
+</article>
+
+<article class="card">
+<span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 17a8.5 8.5 0 1 1 17 0"/><path d="m12 17 4.2-4.8"/><circle cx="12" cy="17" r="1.4"/></svg></span>
+<h3>Act</h3>
+<p>It steers toward a point ahead on its lane and slows for turns, queues, signals and pedestrians.</p>
+</article>
+
+</div>
+</section>
+
+</main>
+
+<footer>Edit <code>sim.js</code> to change the driving logic.</footer>
+
+</div>
+<script src="sim.js"></script>
+</body></html>
