@@ -103,5 +103,81 @@
 <footer>Edit <code>sim.js</code> to change the driving logic.</footer>
 
 </div>
+
+<div class="modal" id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-t" aria-describedby="intro-d">
+<div class="modal-scrim" data-close></div>
+<div class="sheet" id="intro-sheet">
+<div class="sheet-grab" id="intro-grab">
+<span class="grabber" aria-hidden="true"></span>
+<div class="sheet-body">
+
+<div class="modal-head">
+<div class="modal-head-txt">
+<h2 id="intro-t">Autopilot Lab</h2>
+<p id="intro-d">A browser-based self-driving car simulation in a small city.</p>
+</div>
+</div>
+
+<ul class="modal-list">
+<li>Live perception overlays — LiDAR sweep, camera FOV, labelled detections</li>
+<li>Real routing: Dijkstra over 48 intersection states, no U-turns</li>
+<li>Rule-following traffic with cautious, normal and hurried drivers</li>
+<li>Pedestrians, night mode, and Follow / Free camera modes</li>
+</ul>
+
+<div class="author">
+<span class="author-txt">
+<b>Ron Funiestas</b>
+<span>Built this, the city, the traffic, the driving logic and the interface.</span>
+</span>
+</div>
+
+<p class="modal-note">No build step, no dependencies. Open the file and drive.</p>
+<button class="btn primary modal-cta" id="intro-close" type="button">Got it</button>
+
+</div>
+</div>
+</div>
+</div>
+
 <script src="sim.js"></script>
+<script>
+(()=>{
+const m=document.getElementById('intro'),sheet=document.getElementById('intro-sheet'),
+grab=document.getElementById('intro-grab'),cta=document.getElementById('intro-close'),
+scrim=m.querySelector('[data-close]');
+let prev=null,open=false;
+const focusables=()=>[...sheet.querySelectorAll('button,select,input,a[href],[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null);
+function show(){
+ if(open)return;prev=document.activeElement;open=true;
+ m.classList.add('on');document.documentElement.style.overflow='hidden';
+ requestAnimationFrame(()=>cta.focus({preventScroll:true}));
+}
+function hide(){
+ if(!open)return;open=false;
+ m.classList.remove('on');document.documentElement.style.overflow='';
+ if(prev&&prev.focus)prev.focus({preventScroll:true});
+}
+cta.addEventListener('click',hide);
+scrim.addEventListener('click',hide);
+addEventListener('keydown',e=>{
+ if(!open)return;
+ if(e.key==='Escape'){hide();return}
+ if(e.key!=='Tab')return;
+ const f=focusables();if(!f.length)return;
+ const first=f[0],last=f[f.length-1];
+ if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+});
+/* drag the sheet down to dismiss, the way iOS sheets do */
+const wide=()=>matchMedia('(min-width:700px)').matches;
+let sy=0,dy=0,drag=false;
+grab.addEventListener('touchstart',e=>{if(wide()||sheet.scrollTop>0)return;sy=e.touches[0].clientY;dy=0;drag=true},{passive:true});
+grab.addEventListener('touchmove',e=>{if(!drag)return;dy=Math.max(0,e.touches[0].clientY-sy);grab.style.transition='none';grab.style.transform='translateY('+dy+'px)'},{passive:true});
+const endDrag=()=>{if(!drag)return;drag=false;grab.style.transition='';grab.style.transform='';if(dy>110)hide()};
+grab.addEventListener('touchend',endDrag);grab.addEventListener('touchcancel',endDrag);
+const later=()=>setTimeout(show,450);
+if(document.readyState==='complete')later();else addEventListener('load',later);
+})();
+</script>
 </body></html>

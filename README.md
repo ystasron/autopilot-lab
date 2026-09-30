@@ -160,11 +160,15 @@ takes the shortest route to it, obeys a single speed limit, and:
 Each driver gets one of three personalities, which changes its speed multiplier, following
 gap, braking threshold and reaction delay at green:
 
-| Personality | Speed | Following gap | Braking | Reaction |
+| Personality | Speed | Following gap | Brake threshold | Reaction |
 |---|---|---|---|---|
 | Cautious | ×0.85 | wide (×1.3) | gentle (110) | slow (1.2 s) |
 | Normal | ×1.00 | medium (×0.9) | medium (150) | medium (0.7 s) |
 | Hurried | ×1.12 | tight (×0.6) | firm (220) | fast (0.4 s) |
+
+A higher brake threshold means the driver will brake later before it feels unsafe, which is
+what makes the hurried cars look hurried at yellow lights. Roughly 25% of traffic is
+cautious, 55% normal and 20% hurried.
 
 ### Pedestrians
 
