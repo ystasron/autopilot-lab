@@ -5,7 +5,11 @@
 <meta name="theme-color" content="#070a0e">
 <meta name="description" content="A small city with traffic lights, crosswalks and sidewalks, watched from above by a self-driving car.">
 <title>Autopilot Lab — self-driving city simulation</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Autopilot Lab — self-driving city simulation">
+<meta property="og:description" content="A self-driving car you can watch think: live LiDAR and camera overlays, predictive planning, and a reasoning log, all in a dependency-free canvas simulation.">
+<meta property="og:url" content="https://ystasron.github.io/autopilot-lab/">
 </head>
 <body>
 <div class="app">
@@ -275,12 +279,12 @@
     <h2 class="sec-h" id="abt-h">About this project</h2>
     <span class="sec-note">Open source</span>
   </div>
-  <p class="about-p">Autopilot Lab is a single-page simulation made of three plain files: <code>index.html</code> for the layout, <code>style.css</code> for the look and <code>sim.js</code> for the city, the traffic and the driving logic. There is no build step and no dependencies. The other cars follow simpler rules (cautious, normal and hurried drivers), while the green car uses a predictive planner that forecasts other road users, tests candidate speeds and explains its choices. To change how it drives, start with the <code>think()</code> function in <code>sim.js</code>.</p>
+  <p class="about-p">Autopilot Lab is a single-page simulation with no dependencies and no build step: <code>index.html</code> holds the layout, <code>css/style.css</code> the look, <code>js/sim.js</code> the city, the traffic and the driving logic, and <code>js/sheet.js</code> the about dialog. There is no build step and no dependencies. The other cars follow simpler rules (cautious, normal and hurried drivers), while the green car uses a predictive planner that forecasts other road users, tests candidate speeds and explains its choices. To change how it drives, start with the <code>think()</code> function in <code>js/sim.js</code>.</p>
   <p class="about-p">Source code, issues and updates: <a href="https://github.com/ystasron/autopilot-lab" target="_blank" rel="noopener">github.com/ystasron/autopilot-lab</a></p>
 </section>
 
 <footer>
-  <span>Edit <code>sim.js</code> to change the driving logic.</span>
+  <span>Edit <code>js/sim.js</code> to change the driving logic.</span>
   <span class="foot-sep" aria-hidden="true"></span>
   <span>No build step. No dependencies.</span>
   <span class="foot-sep" aria-hidden="true"></span>
@@ -327,44 +331,7 @@
 </div>
 </div>
 
-<script src="sim.js"></script>
-<script>
-(()=>{
-const m=document.getElementById('intro'),sheet=document.getElementById('intro-sheet'),
-grab=document.getElementById('intro-grab'),cta=document.getElementById('intro-close'),
-scrim=m.querySelector('[data-close]');
-let prev=null,open=false;
-const focusables=()=>[...sheet.querySelectorAll('button,select,input,a[href],[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null);
-function show(){
- if(open)return;prev=document.activeElement;open=true;
- m.classList.add('on');document.documentElement.style.overflow='hidden';
- requestAnimationFrame(()=>cta.focus({preventScroll:true}));
-}
-function hide(){
- if(!open)return;open=false;
- m.classList.remove('on');document.documentElement.style.overflow='';
- if(prev&&prev.focus)prev.focus({preventScroll:true});
-}
-cta.addEventListener('click',hide);
-scrim.addEventListener('click',hide);
-addEventListener('keydown',e=>{
- if(!open)return;
- if(e.key==='Escape'){hide();return}
- if(e.key!=='Tab')return;
- const f=focusables();if(!f.length)return;
- const first=f[0],last=f[f.length-1];
- if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
- else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
-});
-/* drag the sheet down to dismiss */
-const wide=()=>matchMedia('(min-width:700px)').matches;
-let sy=0,dy=0,drag=false;
-grab.addEventListener('touchstart',e=>{if(wide()||sheet.scrollTop>0)return;sy=e.touches[0].clientY;dy=0;drag=true},{passive:true});
-grab.addEventListener('touchmove',e=>{if(!drag)return;dy=Math.max(0,e.touches[0].clientY-sy);grab.style.transition='none';grab.style.transform='translateY('+dy+'px)'},{passive:true});
-const endDrag=()=>{if(!drag)return;drag=false;grab.style.transition='';grab.style.transform='';if(dy>110)hide()};
-grab.addEventListener('touchend',endDrag);grab.addEventListener('touchcancel',endDrag);
-const later=()=>setTimeout(show,450);
-if(document.readyState==='complete')later();else addEventListener('load',later);
-})();
-</script>
+<script src="js/sim.js"></script>
+<script src="js/sheet.js"></script>
+
 </body></html>

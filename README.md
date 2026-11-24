@@ -42,9 +42,10 @@ JavaScript — no libraries, no bundler, no assets.
 - **Night mode** — headlights, brake lights, indicator blinkers and 48 street lamps.
 - **Two camera modes** — *Free* for the whole city, *Follow* for a zoomed, eased
   chase view that stays locked on the car.
-- **Apple-style interface** — SF Pro type scale, grouped inset lists, frosted materials,
-  UISwitch-style toggles and a 44pt-minimum tap target layout.
-- **Zero dependencies** — three files, ~40 KB, works offline.
+- **Instrument interface** — a dominant viewport, a monospaced gauge cluster and a
+  single accent colour, with graphite panels separated by hairlines.
+- **Zero dependencies** — plain HTML, CSS and two classic scripts. No build, no
+  bundler, no assets; open the file and it drives, online or offline.
 
 ---
 
@@ -197,32 +198,50 @@ Collision and road-exit counters are the honest scoreboard — a good run keeps 
 
 ---
 
-## Files
+## Project layout
+
+```
+autopilot-lab/
+├── index.html      page structure and copy
+├── css/
+│   └── style.css   design tokens, layout, controls, motion
+├── js/
+│   ├── sim.js      city, traffic, pedestrians, driving logic, rendering
+│   └── sheet.js    the about dialog
+├── LICENSE
+└── README.md
+```
 
 | File | Purpose |
 |---|---|
-| `index.html` | The whole page: structure, controls, copy. |
-| `style.css` | The entire interface — design tokens, layout, controls, motion. |
-| `sim.js` | City, traffic, pedestrians, driving logic and canvas rendering. |
+| `index.html` | Page shell: masthead, viewport, telemetry strip, controls, copy. |
+| `css/style.css` | The entire interface — design tokens, layout, controls, motion. |
+| `js/sim.js` | City, traffic, pedestrians, driving logic and canvas rendering. |
+| `js/sheet.js` | The about dialog: focus trap, `Escape`, scrim click, drag-to-dismiss. |
 
-Edit `sim.js` to change how the car drives. The UI is fully decoupled from it: the page
-only depends on element IDs and `data-k` attributes, so you can restyle or restructure
-the interface without touching a line of simulation code.
+Both scripts load as plain classic scripts — no ES modules, no bundler — so the page
+still works straight from `file://`. They are independent of each other: `js/sheet.js`
+only knows about the dialog, and `js/sim.js` is a single IIFE that owns the canvas and
+talks to the page purely through element IDs and `data-k` attributes. That means you can
+restyle or restructure the interface without touching a line of simulation code.
+
+Edit `js/sim.js` to change how the car drives.
 
 ---
 
 ## Design notes
 
-The interface follows Apple's Human Interface Guidelines rather than a generic dashboard:
+The interface is built as an instrument panel rather than a generic dashboard:
 
-- **System-first typography** — SF Pro on Apple platforms, falling back to the platform
-  system font. Hierarchy comes from size and weight, not from colour.
-- **Grouped inset surfaces** — frosted cards with hairline separators instead of hard
-  borders, on a true-black background.
-- **One accent** — a single system blue, reserved for the primary action and focus rings.
-- **Native-feeling controls** — the sensor toggles are UISwitches, the camera selector is
-  a segmented control, and the speed slider uses the platform's native slider.
-- **Comfortable targets** — 44pt minimum tap targets, safe-area insets respected on
+- **One dominant viewport** — the simulation is the page. Telemetry and controls sit
+  beside and below it instead of competing with it.
+- **Gauge-cluster telemetry** — every live value is monospaced and tabular, so the digits
+  do not jitter as numbers change; speed is the anchor reading.
+- **Hairline surfaces** — graphite panels on near-black, separated by 1px lines rather
+  than heavy borders or drop shadows.
+- **Colour carries meaning** — cyan is the interface accent; green, amber and red are
+  reserved for signal state, nominal and fault.
+- **Comfortable targets** — 44px minimum tap targets, safe-area insets respected on
   notched displays, and `prefers-reduced-motion` honoured.
 
 ---

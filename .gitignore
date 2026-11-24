@@ -1,0 +1,15 @@
+# OS artifacts
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local scratch
+*.log
